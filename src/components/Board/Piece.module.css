@@ -10,6 +10,18 @@
     filter 0.2s;
   cursor: pointer;
   user-select: none;
+  animation: pieceEnter 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes pieceEnter {
+  from {
+    transform: scale(0.4);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
 }
 
 .piece:not(.selected):not(.animating):hover {

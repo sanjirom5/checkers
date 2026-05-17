@@ -109,6 +109,9 @@
 .gameLoss {
   color: #f87171;
 }
+.gameDraw {
+  color: #facc15;
+}
 .gameMoves {
   color: #737373;
 }

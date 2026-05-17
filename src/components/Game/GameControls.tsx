@@ -33,7 +33,7 @@ export function GameControls({
   const statusText = () => {
     if (gameStatus === "idle") return "Select a mode and start a new game";
     if (gameStatus === "won") return "";
-    if (aiThinking) return "AI is thinking...";
+    if (aiThinking) return null;
     return `${currentTurn === "red" ? "Red" : "White"}'s turn`;
   };
 
@@ -98,7 +98,18 @@ export function GameControls({
                 : s.statusWhite,
           )}
         >
-          {statusText()}
+          {aiThinking ? (
+            <span className={s.thinkingLabel}>
+              AI is thinking
+              <span className={s.dots}>
+                <span>.</span>
+                <span>.</span>
+                <span>.</span>
+              </span>
+            </span>
+          ) : (
+            statusText()
+          )}
         </div>
       )}
 

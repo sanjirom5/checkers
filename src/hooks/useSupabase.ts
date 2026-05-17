@@ -68,21 +68,19 @@ export function useSupabase() {
       return { error: new Error("Username is already taken") };
     }
 
-    const { data, error } = await supabase.auth.signUp({ email, password });
+    // Pass username in metadata so the DB trigger can read it
+    const { data, error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        data: { username },
+        emailRedirectTo: "https://checkers-chi.vercel.app/",
+      },
+    });
     if (error) return { error };
     if (!data.user) return { error: new Error("Sign up failed") };
 
-    // Insert profile — only valid once the auth user row exists
-    const { error: profileError } = await supabase.from("profiles").insert({
-      id: data.user.id,
-      username,
-      wins: 0,
-      losses: 0,
-      best_streak: 0,
-      current_streak: 0,
-    });
-    if (profileError) return { error: profileError };
-
+    // Profile row is created automatically by the on_auth_user_created trigger
     return { data, error: null };
   }
 
@@ -101,16 +99,21 @@ export function useSupabase() {
 
   async function saveGame(
     opponent: string,
-    winner: string,
+    result: "win" | "loss" | "draw",
     moveCount: number,
     durationSeconds: number,
+    gameMode: "pvp" | "ai",
+    difficulty?: string,
   ) {
     if (!supabase || !user) return;
 
     const { error: insertError } = await supabase.from("games").insert({
       player_id: user.id,
       opponent,
-      winner,
+      winner: result === "win" ? "red" : "white",
+      result,
+      game_mode: gameMode,
+      difficulty: difficulty ?? null,
       move_count: moveCount,
       duration_seconds: durationSeconds,
     });
@@ -119,9 +122,6 @@ export function useSupabase() {
       return;
     }
 
-    // winner is the color ("red"/"white"); human player is always red
-    const won = winner === "red";
-
     const { data: prof, error: fetchError } = await supabase
       .from("profiles")
       .select("*")
@@ -129,12 +129,12 @@ export function useSupabase() {
       .single();
     if (fetchError || !prof) return;
 
-    const newStreak = won ? prof.current_streak + 1 : 0;
+    const newStreak = result === "win" ? prof.current_streak + 1 : 0;
     const { error: updateError } = await supabase
       .from("profiles")
       .update({
-        wins: won ? prof.wins + 1 : prof.wins,
-        losses: won ? prof.losses : prof.losses + 1,
+        wins: result === "win" ? prof.wins + 1 : prof.wins,
+        losses: result === "loss" ? prof.losses + 1 : prof.losses,
         current_streak: newStreak,
         best_streak: Math.max(prof.best_streak, newStreak),
       })

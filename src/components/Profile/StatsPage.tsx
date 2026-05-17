@@ -76,11 +76,25 @@ export function StatsPage({
               <div className={s.gamesList}>
                 {(games ?? []).slice(0, 10).map((g) => (
                   <div key={g.id} className={s.gameRow}>
-                    <span className={s.gameOpponent}>vs {g.opponent}</span>
+                    <span className={s.gameOpponent}>
+                      {g.game_mode === "ai"
+                        ? `vs AI${g.difficulty ? ` (${g.difficulty})` : ""}`
+                        : "vs Player 2"}
+                    </span>
                     <span
-                      className={g.winner === "red" ? s.gameWin : s.gameLoss}
+                      className={
+                        g.result === "win"
+                          ? s.gameWin
+                          : g.result === "draw"
+                            ? s.gameDraw
+                            : s.gameLoss
+                      }
                     >
-                      {g.winner === "red" ? "Win" : "Loss"}
+                      {g.result === "win"
+                        ? "Win"
+                        : g.result === "draw"
+                          ? "Draw"
+                          : "Loss"}
                     </span>
                     <span className={s.gameMoves}>{g.move_count} moves</span>
                   </div>

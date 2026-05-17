@@ -1,73 +1,50 @@
-# React + TypeScript + Vite
+# Шашки — Русские Шашки онлайн
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Браузерная игра в русские шашки с искусственным интеллектом, сохранением статистики и поддержкой светлой/тёмной темы.
 
-Currently, two official plugins are available:
+## Для кого
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+Для всех, кто хочет сыграть в шашки прямо в браузере — как в одиночку против ИИ, так и с другом за одним устройством.
 
-## React Compiler
+## Что умеет
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- **Игра против ИИ** с тремя уровнями сложности: лёгкий, средний, сложный (алгоритм минимакс с альфа-бета отсечением)
+- **Игра вдвоём** на одном устройстве с возможностью отмены хода
+- **Подсказки ходов** — доступные клетки подсвечиваются при выборе фигуры
+- **Обязательные взятия** и **цепные взятия** по правилам русских шашок
+- **Определение ничьей** — правило 40 ходов без взятия
+- **Авторизация** — регистрация и вход через email или Google
+- **Автосохранение истории партий** — каждая сыгранная партия (победа, поражение, ничья) сохраняется автоматически
+- **Статистика** — победы, поражения, текущая и лучшая серия побед
+- **История ходов** текущей партии в шахматной нотации
+- **Таймер** для каждого игрока
+- **Адаптивный интерфейс** — работает на телефоне, планшете и десктопе
+- **Светлая и тёмная тема**
 
-## Expanding the ESLint configuration
+## Почему это ценно
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+Большинство онлайн-шашек либо перегружены рекламой, либо требуют установки приложения. Здесь — чистый интерфейс, никакой рекламы, работает мгновенно в любом браузере.
 
-```js
-export default defineConfig([
-  globalIgnores(["dist"]),
-  {
-    files: ["**/*.{ts,tsx}"],
-    extends: [
-      // Other configs...
+## Технологии
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+- React + TypeScript + Vite
+- Zustand — управление состоянием игры
+- Supabase — авторизация и база данных
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ["./tsconfig.node.json", "./tsconfig.app.json"],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-]);
+## Локальный запуск
+
+```bash
+cp .env.example .env.local
+# заполните VITE_SUPABASE_URL и VITE_SUPABASE_PUBLISHABLE_KEY
+
+npm install
+npm run dev
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## Миграции базы данных
 
-```js
-// eslint.config.js
-import reactX from "eslint-plugin-react-x";
-import reactDom from "eslint-plugin-react-dom";
-
-export default defineConfig([
-  globalIgnores(["dist"]),
-  {
-    files: ["**/*.{ts,tsx}"],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs["recommended-typescript"],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ["./tsconfig.node.json", "./tsconfig.app.json"],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-]);
+```bash
+npx supabase login
+npx supabase link --project-ref <your-project-ref>
+npx supabase db push
 ```

@@ -8,6 +8,7 @@
 .labels {
   display: flex;
   margin-left: 1.25rem;
+  width: min(80vw, 480px);
 }
 
 .labelCell {

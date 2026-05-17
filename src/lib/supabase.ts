@@ -21,6 +21,9 @@ export type GameRecord = {
   player_id: string;
   opponent: string;
   winner: string;
+  result: "win" | "loss" | "draw";
+  game_mode: "pvp" | "ai";
+  difficulty?: string;
   move_count: number;
   duration_seconds: number;
   created_at: string;

@@ -44,9 +44,8 @@ export function useAI() {
     gameMode,
     gameStatus,
     difficulty,
-    aiThinking,
     isAnimating,
     executeMove,
     setAiThinking,
-  ]);
+  ]); // aiThinking intentionally omitted: including it causes the effect to cancel its own timeout
 }

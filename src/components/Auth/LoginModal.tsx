@@ -10,7 +10,7 @@ interface LoginModalProps {
     email: string,
     password: string,
   ) => Promise<{ error: Error | null }>;
-  onGoogle: () => void;
+  onGoogle?: () => void;
   onSwitchToSignup: () => void;
 }
 
@@ -18,7 +18,6 @@ export function LoginModal({
   open,
   onClose,
   onLogin,
-  onGoogle,
   onSwitchToSignup,
 }: LoginModalProps) {
   const [email, setEmail] = useState("");
@@ -62,20 +61,6 @@ export function LoginModal({
           style={{ width: "100%", marginTop: "0.25rem" }}
         >
           {loading ? "Signing in..." : "Sign In"}
-        </Button>
-        <div className={s.divider}>
-          <div className={s.dividerLine} />
-          <div className={s.dividerText}>
-            <span>or</span>
-          </div>
-        </div>
-        <Button
-          type="button"
-          variant="secondary"
-          onClick={onGoogle}
-          style={{ width: "100%" }}
-        >
-          Continue with Google
         </Button>
         <p className={s.switchText}>
           No account?{" "}

@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useLayoutEffect, useRef } from "react";
 import { Board } from "./components/Board/Board";
 import { GameControls } from "./components/Game/GameControls";
 import { MoveHistory } from "./components/Game/MoveHistory";
@@ -45,6 +45,29 @@ export default function App() {
   const [showStats, setShowStats] = useState(false);
   const gameSaved = useRef(false);
 
+  // Always-current snapshot of game values — lets the save effect
+  // read fresh data without listing every field as a dependency
+  const gameSnap = useRef({
+    winner,
+    gameMode,
+    difficulty,
+    moveHistory,
+    redTime,
+    whiteTime,
+    saveGame,
+  });
+  useLayoutEffect(() => {
+    gameSnap.current = {
+      winner,
+      gameMode,
+      difficulty,
+      moveHistory,
+      redTime,
+      whiteTime,
+      saveGame,
+    };
+  });
+
   useEffect(() => {
     document.documentElement.classList.toggle("dark", theme === "dark");
   }, [theme]);
@@ -53,14 +76,40 @@ export default function App() {
     if (gameStatus === "playing") gameSaved.current = false;
   }, [gameStatus]);
 
-  if (loading) return <div className={s.loading}>Loading...</div>;
-
-  async function handleSaveGame() {
-    if (!winner || gameSaved.current) return;
+  useEffect(() => {
+    if ((gameStatus !== "won" && gameStatus !== "draw") || !user) return;
+    if (gameSaved.current) return;
+    const {
+      winner,
+      gameMode,
+      difficulty,
+      moveHistory,
+      redTime,
+      whiteTime,
+      saveGame,
+    } = gameSnap.current;
+    const result =
+      gameStatus === "draw" ? "draw" : winner === "red" ? "win" : "loss";
     const opponent = gameMode === "ai" ? `AI (${difficulty})` : "Player 2";
-    await saveGame(opponent, winner, moveHistory.length, redTime + whiteTime);
+    saveGame(
+      opponent,
+      result,
+      moveHistory.length,
+      redTime + whiteTime,
+      gameMode,
+      difficulty,
+    );
     gameSaved.current = true;
-  }
+  }, [gameStatus, user]);
+
+  if (loading)
+    return (
+      <div className={s.loading}>
+        <span className={s.loadingIcon}>♟</span>
+        <div className={s.loadingSpinner} />
+        <span className={s.loadingLabel}>Loading…</span>
+      </div>
+    );
 
   return (
     <div className={s.app}>
@@ -113,10 +162,9 @@ export default function App() {
         </div>
       </main>
 
-      {gameStatus === "won" && (
+      {(gameStatus === "won" || gameStatus === "draw") && (
         <WinScreen
           onNewGame={() => useGameStore.getState().resetGame()}
-          onSaveGame={user ? handleSaveGame : undefined}
           isLoggedIn={!!user}
         />
       )}

@@ -4,15 +4,10 @@ import s from "./WinScreen.module.css";
 
 interface WinScreenProps {
   onNewGame: () => void;
-  onSaveGame?: () => void;
   isLoggedIn: boolean;
 }
 
-export function WinScreen({
-  onNewGame,
-  onSaveGame,
-  isLoggedIn,
-}: WinScreenProps) {
+export function WinScreen({ onNewGame, isLoggedIn }: WinScreenProps) {
   const {
     winner,
     gameStatus,
@@ -57,14 +52,10 @@ export function WinScreen({
           >
             Change Mode
           </Button>
-          {isLoggedIn && onSaveGame && (
-            <Button
-              variant="ghost"
-              onClick={onSaveGame}
-              style={{ width: "100%" }}
-            >
-              Save to Profile
-            </Button>
+          {isLoggedIn && (
+            <p style={{ fontSize: "0.75rem", color: "#4ade80", margin: 0 }}>
+              Game saved to profile
+            </p>
           )}
         </div>
       </div>
