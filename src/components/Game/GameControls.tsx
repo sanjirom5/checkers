@@ -23,8 +23,11 @@ export function GameControls({
     gameStatus,
     currentTurn,
     aiThinking,
+    isAnimating,
+    hintMove,
     initGame,
     undoMove,
+    getHint,
     boardHistory,
   } = useGameStore();
   const [pendingMode, setPendingMode] = useState<GameMode>("pvp");
@@ -112,6 +115,18 @@ export function GameControls({
           )}
         </div>
       )}
+
+      {gameStatus === "playing" &&
+        !(gameMode === "ai" && currentTurn === "white") && (
+          <Button
+            variant="secondary"
+            onClick={getHint}
+            disabled={isAnimating || aiThinking}
+            style={{ width: "100%", opacity: hintMove ? 0.6 : 1 }}
+          >
+            💡 {hintMove ? "Hint shown" : "Hint"}
+          </Button>
+        )}
 
       {gameMode === "pvp" &&
         gameStatus === "playing" &&

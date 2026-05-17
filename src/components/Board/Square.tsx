@@ -20,6 +20,7 @@ export function Square({ row, col }: SquareProps) {
     selectPiece,
     executeMove,
     validMoves,
+    hintMove,
   } = useGameStore();
 
   const isLight = (row + col) % 2 === 0;
@@ -32,6 +33,8 @@ export function Square({ row, col }: SquareProps) {
     (lastMove?.to.row === row && lastMove?.to.col === col);
   const isAnimatingHere =
     animatingPos?.row === row && animatingPos?.col === col;
+  const isHintFrom = hintMove?.from.row === row && hintMove?.from.col === col;
+  const isHintTo = hintMove?.to.row === row && hintMove?.to.col === col;
 
   function handleClick() {
     if (gameStatus !== "playing" || isAnimating) return;
@@ -58,6 +61,8 @@ export function Square({ row, col }: SquareProps) {
         s.square,
         isLight ? s.light : s.dark,
         isLastMove && s.lastMove,
+        isHintFrom && s.hintFrom,
+        isHintTo && s.hintTo,
       )}
     >
       {isAnimatingHere && (

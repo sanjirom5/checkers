@@ -64,6 +64,34 @@
   }
 }
 
+.hintFrom::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(74, 222, 128, 0.35);
+  pointer-events: none;
+}
+
+.hintTo::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(74, 222, 128, 0.2);
+  border: 3px solid rgba(74, 222, 128, 0.8);
+  pointer-events: none;
+  animation: hintPulse 1s ease-in-out infinite;
+}
+
+@keyframes hintPulse {
+  0%,
+  100% {
+    border-color: rgba(74, 222, 128, 0.8);
+  }
+  50% {
+    border-color: rgba(74, 222, 128, 0.3);
+  }
+}
+
 .animatingRingWrapper {
   position: absolute;
   inset: 0;

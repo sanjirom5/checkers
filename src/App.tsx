@@ -118,7 +118,6 @@ export default function App() {
           <span className={s.headerIcon}>♟</span>
           <div>
             <h1 className={s.headerTitle}>Checkers</h1>
-            <p className={s.headerSub}>Russian Draughts</p>
           </div>
         </div>
         <div className={s.headerActions}>

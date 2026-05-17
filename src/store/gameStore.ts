@@ -8,6 +8,7 @@ import {
   moveToNotation,
   getValidSquaresForSelected,
 } from "../utils/checkers";
+import { getBestMove } from "../utils/ai";
 
 export type GameMode = "pvp" | "ai";
 export type Difficulty = "easy" | "medium" | "hard";
@@ -35,6 +36,7 @@ export interface GameState {
   whiteTime: number;
   theme: "light" | "dark";
   movesSinceCapture: number;
+  hintMove: Move | null;
 }
 
 export interface GameActions {
@@ -46,6 +48,7 @@ export interface GameActions {
   tickTimer: () => void;
   setTheme: (t: "light" | "dark") => void;
   resetGame: () => void;
+  getHint: () => void;
 }
 
 const initialState: GameState = {
@@ -70,6 +73,7 @@ const initialState: GameState = {
   whiteTime: 0,
   theme: (localStorage.getItem("theme") as "light" | "dark") ?? "dark",
   movesSinceCapture: 0,
+  hintMove: null,
 };
 
 export const useGameStore = create<GameState & GameActions>((set, get) => ({
@@ -159,6 +163,7 @@ export const useGameStore = create<GameState & GameActions>((set, get) => ({
         movesSinceCapture: newMovesSinceCapture,
         gameStatus: won ? "won" : isDraw ? "draw" : "playing",
         winner: won ? currentTurn : null,
+        hintMove: null,
       });
       return;
     }
@@ -189,6 +194,7 @@ export const useGameStore = create<GameState & GameActions>((set, get) => ({
           movesSinceCapture: 0,
           gameStatus: won ? "won" : "playing",
           winner: won ? currentTurn : null,
+          hintMove: null,
         });
         return;
       }
@@ -239,6 +245,13 @@ export const useGameStore = create<GameState & GameActions>((set, get) => ({
   },
 
   setAiThinking: (v) => set({ aiThinking: v }),
+
+  getHint: () => {
+    const { board, currentTurn, gameStatus, isAnimating, aiThinking } = get();
+    if (gameStatus !== "playing" || isAnimating || aiThinking) return;
+    const hint = getBestMove(board, currentTurn, 3);
+    set({ hintMove: hint });
+  },
 
   tickTimer: () => {
     const { currentTurn, gameStatus } = get();
