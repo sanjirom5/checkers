@@ -4,16 +4,17 @@ import s from "./MoveHistory.module.css";
 
 export function MoveHistory() {
   const { moveHistory } = useGameStore();
-  const endRef = useRef<HTMLDivElement>(null);
+  const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    endRef.current?.scrollIntoView({ behavior: "smooth" });
+    const el = scrollRef.current;
+    if (el) el.scrollTop = el.scrollHeight;
   }, [moveHistory]);
 
   return (
     <div className={s.container}>
       <div className={s.label}>Move History</div>
-      <div className={s.scroll}>
+      <div className={s.scroll} ref={scrollRef}>
         {moveHistory.length === 0 ? (
           <p className={s.empty}>No moves yet</p>
         ) : (
@@ -29,7 +30,6 @@ export function MoveHistory() {
             ))}
           </div>
         )}
-        <div ref={endRef} />
       </div>
     </div>
   );
