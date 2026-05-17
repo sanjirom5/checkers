@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { supabase } from "../lib/supabase";
 import type { Profile } from "../lib/supabase";
 import type { User } from "@supabase/supabase-js";
@@ -6,15 +6,13 @@ import type { User } from "@supabase/supabase-js";
 export function useSupabase() {
   const [user, setUser] = useState<User | null>(null);
   const [profile, setProfile] = useState<Profile | null>(null);
-  const [loading, setLoading] = useState(true);
+  // Start as true only if supabase is configured — avoids sync setState in effect
+  const [loading, setLoading] = useState(supabase !== null);
   // Prevent double-fetch from getSession + onAuthStateChange firing together on mount
   const initialSessionHandled = useRef(false);
 
   useEffect(() => {
-    if (!supabase) {
-      setLoading(false);
-      return;
-    }
+    if (!supabase) return;
 
     const {
       data: { subscription },
@@ -144,7 +142,7 @@ export function useSupabase() {
     if (!updateError) await fetchProfile(user.id);
   }
 
-  async function fetchGames() {
+  const fetchGames = useCallback(async () => {
     if (!supabase || !user) return [];
     const { data, error } = await supabase
       .from("games")
@@ -156,7 +154,7 @@ export function useSupabase() {
       return [];
     }
     return data ?? [];
-  }
+  }, [user]);
 
   return {
     user,

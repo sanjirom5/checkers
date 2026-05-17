@@ -19,17 +19,13 @@ export function StatsPage({
   onFetchGames,
   onSignOut,
 }: StatsPageProps) {
-  const [games, setGames] = useState<GameRecord[]>([]);
-  const [loading, setLoading] = useState(false);
+  const [games, setGames] = useState<GameRecord[] | null>(null);
+  const loading = open && !!profile && games === null;
 
   useEffect(() => {
     if (!open || !profile) return;
-    setLoading(true);
-    onFetchGames().then((g) => {
-      setGames(g);
-      setLoading(false);
-    });
-  }, [open, profile]);
+    onFetchGames().then((g) => setGames(g));
+  }, [open, profile, onFetchGames]);
 
   const winRate =
     profile && profile.wins + profile.losses > 0
@@ -74,11 +70,11 @@ export function StatsPage({
             <div className={s.sectionLabel}>Recent Games</div>
             {loading ? (
               <p className={s.loadingText}>Loading...</p>
-            ) : games.length === 0 ? (
+            ) : !games || games.length === 0 ? (
               <p className={s.loadingText}>No games yet</p>
             ) : (
               <div className={s.gamesList}>
-                {games.slice(0, 10).map((g) => (
+                {(games ?? []).slice(0, 10).map((g) => (
                   <div key={g.id} className={s.gameRow}>
                     <span className={s.gameOpponent}>vs {g.opponent}</span>
                     <span

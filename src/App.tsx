@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Board } from "./components/Board/Board";
 import { GameControls } from "./components/Game/GameControls";
 import { MoveHistory } from "./components/Game/MoveHistory";
@@ -43,23 +43,23 @@ export default function App() {
 
   const [authModal, setAuthModal] = useState<AuthModal>("none");
   const [showStats, setShowStats] = useState(false);
-  const [gameSaved, setGameSaved] = useState(false);
+  const gameSaved = useRef(false);
 
   useEffect(() => {
     document.documentElement.classList.toggle("dark", theme === "dark");
   }, [theme]);
 
   useEffect(() => {
-    if (gameStatus === "playing") setGameSaved(false);
+    if (gameStatus === "playing") gameSaved.current = false;
   }, [gameStatus]);
 
   if (loading) return <div className={s.loading}>Loading...</div>;
 
   async function handleSaveGame() {
-    if (!winner || gameSaved) return;
+    if (!winner || gameSaved.current) return;
     const opponent = gameMode === "ai" ? `AI (${difficulty})` : "Player 2";
     await saveGame(opponent, winner, moveHistory.length, redTime + whiteTime);
-    setGameSaved(true);
+    gameSaved.current = true;
   }
 
   return (
