@@ -45,8 +45,6 @@ export default function App() {
   const [showStats, setShowStats] = useState(false);
   const [gameSaved, setGameSaved] = useState(false);
 
-  if (loading) return <div className={s.loading}>Loading...</div>;
-
   useEffect(() => {
     document.documentElement.classList.toggle("dark", theme === "dark");
   }, [theme]);
@@ -54,6 +52,8 @@ export default function App() {
   useEffect(() => {
     if (gameStatus === "playing") setGameSaved(false);
   }, [gameStatus]);
+
+  if (loading) return <div className={s.loading}>Loading...</div>;
 
   async function handleSaveGame() {
     if (!winner || gameSaved) return;
