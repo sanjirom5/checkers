@@ -15,6 +15,7 @@ export function WinScreen({
 }: WinScreenProps) {
   const {
     winner,
+    gameStatus,
     moveHistory,
     redTime,
     whiteTime,
@@ -22,7 +23,7 @@ export function WinScreen({
     difficulty,
     initGame,
   } = useGameStore();
-  if (!winner) return null;
+  if (gameStatus !== "won" && gameStatus !== "draw") return null;
 
   const totalTime = redTime + whiteTime;
   const mins = Math.floor(totalTime / 60);
@@ -32,8 +33,12 @@ export function WinScreen({
     <div className={s.overlay}>
       <div className={s.backdrop} />
       <div className={s.panel}>
-        <div className={s.trophy}>🏆</div>
-        <h2 className={s.title}>{winner === "red" ? "Red" : "White"} Wins!</h2>
+        <div className={s.trophy}>{gameStatus === "draw" ? "🤝" : "🏆"}</div>
+        <h2 className={s.title}>
+          {gameStatus === "draw"
+            ? "It's a Draw!"
+            : `${winner === "red" ? "Red" : "White"} Wins!`}
+        </h2>
         <p className={s.subtitle}>
           {moveHistory.length} moves · {mins}m {secs}s
         </p>

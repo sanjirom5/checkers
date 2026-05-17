@@ -59,6 +59,20 @@
     color 0.15s;
 }
 
+.diffBtn.active {
+  background-color: var(--accent);
+  color: #ffffff;
+}
+
+.diffBtn.inactive {
+  background-color: var(--bg-surface-2);
+  color: var(--text-2);
+}
+
+.diffBtn.inactive:hover {
+  background-color: var(--border);
+}
+
 .startBtn {
   width: 100%;
 }

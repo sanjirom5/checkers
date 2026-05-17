@@ -1,17 +1,21 @@
+import { useMemo } from "react";
 import { useGameStore } from "../../store/gameStore";
 import s from "./ScorePanel.module.css";
 
 export function ScorePanel() {
   const { capturedByRed, capturedByWhite, board } = useGameStore();
 
-  let redCount = 0,
-    whiteCount = 0;
-  for (const row of board) {
-    for (const cell of row) {
-      if (cell?.color === "red") redCount++;
-      else if (cell?.color === "white") whiteCount++;
+  const { redCount, whiteCount } = useMemo(() => {
+    let red = 0,
+      white = 0;
+    for (const row of board) {
+      for (const cell of row) {
+        if (cell?.color === "red") red++;
+        else if (cell?.color === "white") white++;
+      }
     }
-  }
+    return { redCount: red, whiteCount: white };
+  }, [board]);
 
   return (
     <div className={s.row}>

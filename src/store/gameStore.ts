@@ -34,6 +34,7 @@ export interface GameState {
   redTime: number;
   whiteTime: number;
   theme: "light" | "dark";
+  movesSinceCapture: number;
 }
 
 export interface GameActions {
@@ -68,6 +69,7 @@ const initialState: GameState = {
   redTime: 0,
   whiteTime: 0,
   theme: (localStorage.getItem("theme") as "light" | "dark") ?? "dark",
+  movesSinceCapture: 0,
 };
 
 export const useGameStore = create<GameState & GameActions>((set, get) => ({
@@ -124,6 +126,7 @@ export const useGameStore = create<GameState & GameActions>((set, get) => ({
       boardHistory,
       capturedByRed,
       capturedByWhite,
+      movesSinceCapture,
     } = get();
     const notation = moveToNotation(move);
 
@@ -136,7 +139,11 @@ export const useGameStore = create<GameState & GameActions>((set, get) => ({
         capturedByWhite + (currentTurn === "white" ? move.captures.length : 0);
       const nextTurn: Color = currentTurn === "red" ? "white" : "red";
       const won = checkWin(newBoard, currentTurn);
-      const nextMoves = won ? [] : getAllFullMoves(newBoard, nextTurn);
+      const newMovesSinceCapture =
+        move.captures.length > 0 ? 0 : movesSinceCapture + 1;
+      const isDraw = !won && newMovesSinceCapture >= 40;
+      const nextMoves =
+        won || isDraw ? [] : getAllFullMoves(newBoard, nextTurn);
 
       set({
         board: newBoard,
@@ -149,7 +156,8 @@ export const useGameStore = create<GameState & GameActions>((set, get) => ({
         capturedByRed: newCapturedByRed,
         capturedByWhite: newCapturedByWhite,
         lastMove: move,
-        gameStatus: won ? "won" : "playing",
+        movesSinceCapture: newMovesSinceCapture,
+        gameStatus: won ? "won" : isDraw ? "draw" : "playing",
         winner: won ? currentTurn : null,
       });
       return;
@@ -166,7 +174,7 @@ export const useGameStore = create<GameState & GameActions>((set, get) => ({
 
     const applyNextStep = () => {
       if (step >= chain.length) {
-        // All hops done — finalize turn
+        // All hops done — finalize turn (chain captures always reset the counter)
         const nextTurn: Color = currentTurn === "red" ? "white" : "red";
         const won = checkWin(stepBoard, currentTurn);
         const nextMoves = won ? [] : getAllFullMoves(stepBoard, nextTurn);
@@ -178,6 +186,7 @@ export const useGameStore = create<GameState & GameActions>((set, get) => ({
           moveHistory: [...get().moveHistory, notation],
           boardHistory: [...get().boardHistory, stepBoard],
           lastMove: move,
+          movesSinceCapture: 0,
           gameStatus: won ? "won" : "playing",
           winner: won ? currentTurn : null,
         });

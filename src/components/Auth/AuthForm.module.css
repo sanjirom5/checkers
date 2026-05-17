@@ -82,3 +82,11 @@
 .switchLink:hover {
   text-decoration: underline;
 }
+
+.confirmText {
+  text-align: center;
+  font-size: 0.875rem;
+  color: #4ade80;
+  line-height: 1.5;
+  margin: 0.5rem 0;
+}

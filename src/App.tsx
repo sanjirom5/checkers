@@ -32,6 +32,7 @@ export default function App() {
   const {
     user,
     profile,
+    loading,
     signIn,
     signUp,
     signOut,
@@ -43,6 +44,8 @@ export default function App() {
   const [authModal, setAuthModal] = useState<AuthModal>("none");
   const [showStats, setShowStats] = useState(false);
   const [gameSaved, setGameSaved] = useState(false);
+
+  if (loading) return <div className={s.loading}>Loading...</div>;
 
   useEffect(() => {
     document.documentElement.classList.toggle("dark", theme === "dark");

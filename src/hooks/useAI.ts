@@ -38,5 +38,15 @@ export function useAI() {
     return () => {
       if (timeoutRef.current) clearTimeout(timeoutRef.current);
     };
-  }, [board, currentTurn, gameMode, gameStatus]);
+  }, [
+    board,
+    currentTurn,
+    gameMode,
+    gameStatus,
+    difficulty,
+    aiThinking,
+    isAnimating,
+    executeMove,
+    setAiThinking,
+  ]);
 }
